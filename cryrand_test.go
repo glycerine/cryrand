@@ -1,6 +1,7 @@
 package cryrand
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 )
@@ -56,4 +57,22 @@ func TestCryptoRandSomeNeg(t *testing.T) {
 	fmt.Printf("pos:%v, neg:%v\n",
 		float64(pos)/float64(n),
 		float64(neg)/float64(n))
+}
+
+func TestBytes(t *testing.T) {
+	ma := MathRandBytes(80)
+	fmt.Printf("MathRandBytes: %x\n", ma)
+	cr := CryptoRandBytes(80)
+	fmt.Printf("CryptoRandBytes: %x\n", cr)
+	if 0 == bytes.Compare(ma, cr) {
+		panic("man, something is seriously wrong here.")
+	}
+
+	for i := 0; i <= 32; i++ {
+		s := MathRandHexString(i)
+		if len(s) != i {
+			panic("wrong len")
+		}
+		fmt.Printf("MathRandHexString(%v): '%s' (len %v)\n", i, s, len(s))
+	}
 }

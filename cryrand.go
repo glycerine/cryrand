@@ -14,6 +14,10 @@ func init() {
 	mathRandSrc = mr.New(mr.NewSource(seed))
 }
 
+func SeedOurMathRandSrc(seed int64) {
+	mathRandSrc.Seed(seed)
+}
+
 func MathRandInt64() int64 {
 	// generate one rand for the sign, xor with a 2nd.
 	return (mathRandSrc.Int63() << 1) ^ mathRandSrc.Int63()
@@ -33,6 +37,44 @@ func CryptoRandInt64() int64 {
 func CryptoRandBytes(n int) []byte {
 	b := make([]byte, n)
 	_, err := cr.Read(b)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+var enc16 string = "0123456789abcdef"
+var e16 []rune = []rune(enc16)
+
+// nibble must be between 0 and 15 inclusive.
+func encode16(nibble byte) rune {
+	return e16[nibble]
+}
+
+func MathRandHexString(n int) string {
+	by := MathRandBytes(n/2 + 1)
+
+	m := len(by)
+	p := m - 1
+	t := p * 2
+	res := make([]rune, m*2)
+	for i := 0; i < m; i++ {
+		r := byte(by[p-i])
+		res[t-i*2] = encode16(r >> 4)
+		res[t-i*2+1] = encode16(r & 0x0F)
+	}
+
+	// we could be 1 byte larger than need, so
+	// truncate here
+	s := string(res)[:n]
+	//fmt.Printf("source bytes: %x\n", by)
+	//fmt.Printf("hexstring conversion: %s\n", s)
+	return s
+}
+
+func MathRandBytes(n int) []byte {
+	b := make([]byte, n)
+	_, err := mathRandSrc.Read(b)
 	if err != nil {
 		panic(err)
 	}
