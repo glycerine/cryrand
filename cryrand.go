@@ -105,3 +105,20 @@ func RandomString(n int) string {
 	}
 	return string(s)
 }
+
+var chu = []byte("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func RandomStringWithUp(n int) string {
+	s := make([]byte, n)
+	m := int64(len(chu))
+	for i := 0; i < n; i++ {
+		r := CryptoRandInt64()
+		if r < 0 {
+			r = -r
+		}
+		k := r % m
+		a := chu[k]
+		s[i] = a
+	}
+	return string(s)
+}
